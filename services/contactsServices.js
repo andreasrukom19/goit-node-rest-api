@@ -1,3 +1,10 @@
+import Contact from "../models/Contact.js";
+
+export function listContacts() {
+  return Contact.find();
+}
+
+/*
 import fs from "fs/promises";
 import path from "path";
 import { nanoid } from "nanoid";
@@ -51,3 +58,4 @@ export async function updateContactById(id, data) {
   await updateContacts(contacts);
   return contacts[index];
 }
+*/
