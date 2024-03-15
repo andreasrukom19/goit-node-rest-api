@@ -5,8 +5,10 @@ import {
   deleteContact,
   createContact,
   updateContact,
+  updateStatusContact,
 } from "../controllers/contactsControllers.js";
-import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
+import isValidId from "../middlewares/isValidId.js";
+import { createContactSchema, updateContactSchema, updatePatchContactSchema } from "../schemas/contactsSchemas.js";
 import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
 import { validateBody } from "../helpers/validateBody.js";
 
@@ -14,12 +16,14 @@ const contactsRouter = express.Router();
 
 contactsRouter.get("/", ctrlWrapper(getAllContacts));
 
-contactsRouter.get("/:id", ctrlWrapper(getOneContact));
+contactsRouter.get("/:id", isValidId, ctrlWrapper(getOneContact));
 
-contactsRouter.delete("/:id", ctrlWrapper(deleteContact));
+contactsRouter.delete("/:id", isValidId, ctrlWrapper(deleteContact));
 
 contactsRouter.post("/", validateBody(createContactSchema), ctrlWrapper(createContact));
 
-contactsRouter.put("/:id", validateBody(updateContactSchema), ctrlWrapper(updateContact));
+contactsRouter.put("/:id", isValidId, validateBody(updateContactSchema), ctrlWrapper(updateContact));
+
+contactsRouter.patch("/:id/favorite", isValidId, validateBody(updatePatchContactSchema), ctrlWrapper(updateStatusContact));
 
 export default contactsRouter;
