@@ -4,7 +4,6 @@ import HttpError from "../helpers/HttpError.js";
 import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
 
 const { JWT_SECRET } = process.env;
-console.log(JWT_SECRET);
 
 const signup = async (req, res) => {
   const { email } = req.body;
@@ -37,13 +36,34 @@ const signin = async (req, res) => {
   }
 
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
+  await authServices.updateUser({ _id: id }, { token });
 
   res.json({
     token,
   })
 }
 
+const getCurrent = async (req, res) => {
+  const { username, email } = req.user;
+
+  res.json({
+    username,
+    email
+  })
+}
+
+const signout = async (req, res) => {
+  const { _id } = req.user;
+  await authServices.updateUser({ _id }, { token: null });
+
+  res.json({
+    message: "Signout success"
+  })
+}
+
 export default {
   signup: ctrlWrapper(signup),
-  signin: ctrlWrapper(signin)
+  signin: ctrlWrapper(signin),
+  getCurrent: ctrlWrapper(getCurrent),
+  signout: ctrlWrapper(signout)
 }

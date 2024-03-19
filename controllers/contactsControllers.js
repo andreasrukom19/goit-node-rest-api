@@ -2,8 +2,11 @@ import * as contactsService from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 
-export const getAllContacts = async (_, res) => {
-    const result = await contactsService.listContacts();
+export const getAllContacts = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+    const result = await contactsService.listContacts({owner}, {skip, limit});
     res.json(result);
 };
 
@@ -28,8 +31,9 @@ export const deleteContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
-    const result = await contactsService.addContact(req.body);
-    res.status(201).json(result);
+  const { _id: owner } = req.user;
+  const result = await contactsService.addContact({...req.body, owner});
+  res.status(201).json(result);
 };
 
 export const updateContact = async (req, res) => {
