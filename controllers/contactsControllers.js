@@ -1,8 +1,6 @@
 import * as contactsService from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
-// const avatarsPath = path.resolve("public", "avatars");
-
 export const getAllContacts = async (req, res) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 10 } = req.query;
@@ -35,10 +33,6 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   const { _id: owner } = req.user;
-  // const { path: oldPath, filename } = req.file;
-  // const newPath = path.join(avatarsPath, filename);
-  // await fs.rename(oldPath, newPath);
-  // const avatarURL = path.join("avatars", filename);
   const result = await contactsService.addContact({...req.body, owner});
   res.status(201).json(result);
 };
