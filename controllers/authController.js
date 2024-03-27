@@ -16,14 +16,15 @@ const signup = async (req, res) => {
   if (user) {
     throw HttpError(409, "Email in use");
   }
+  const subscription = req.body.subscription ?? "starter";
   const avatarURL = gravatar.url(email);
-  const body = { ...req.body, avatarURL };
+  const body = { ...req.body, subscription, avatarURL };
 
   const newUser = await authServices.signup(body);
 
   res.status(201).json({
-    username: newUser.username,
-    email: newUser.email
+    email: newUser.email,
+    subscription: newUser.subscription,
   })
 }
 
@@ -70,6 +71,10 @@ const signout = async (req, res) => {
 }
 
 const avatarUpdate = async (req, res) => {
+  if (!req.file) {
+    throw HttpError(400, "File not uploaded");
+  }
+
   const { _id } = req.user;
 
   const avatarImage = await Jimp.read(req.file.path);
